@@ -3,86 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobody Knows - Secure Chat</title>
+    <title>NK | Nobody Knows - Secure Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-dark: #0a0a0a;
             --primary-green: #00ff88;
             --secondary-green: #007a4d;
+            --accent-green: #00c973;
             --text-light: #f0f0f0;
-            --text-dark: #333;
+            --text-dark: #222;
+            --bg-light: #f5f5f5;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--primary-dark);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
             color: var(--text-light);
-            margin: 0;
-            padding: 0;
+            min-height: 100vh;
             transition: all 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
         }
         
         body.light-mode {
-            background-color: #f5f5f5;
+            background-color: var(--bg-light);
             color: var(--text-dark);
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
             text-align: center;
         }
         
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
         .logo {
-            font-size: 3rem;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--bg-dark);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .logo-text {
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary-green);
-            margin-bottom: 0.5rem;
             letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
         }
         
         .slogan {
-            font-size: 1.2rem;
-            color: var(--primary-green);
+            font-size: 1.3rem;
+            color: white;
             margin-bottom: 2rem;
             height: 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .btn {
             background-color: var(--secondary-green);
             color: white;
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
+            padding: 0.8rem 1.8rem;
+            border-radius: var(--border-radius);
             font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             margin: 0.5rem;
             transition: all 0.2s;
+            box-shadow: var(--box-shadow);
         }
         
         .btn:hover {
             background-color: var(--primary-green);
             transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--secondary-green);
+            color: var(--primary-green);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 255, 136, 0.1);
         }
         
         .session-id {
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 1.5rem;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             color: var(--primary-green);
-            margin: 1rem 0;
+            margin: 1.5rem 0;
             padding: 1rem;
             background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-green);
+            box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.1);
         }
         
         .theme-toggle {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            right: 1.5rem;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            z-index: 100;
         }
         
         .theme-btn {
@@ -91,83 +152,263 @@
             cursor: pointer;
             padding: 0.5rem;
             border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
         
-        .theme-btn img {
-            width: 24px;
-            height: 24px;
+        .theme-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .theme-btn i {
+            font-size: 1.2rem;
+            color: var(--primary-green);
         }
         
         .social-icons {
             margin-top: 3rem;
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
         
-        .social-icons a img {
-            width: 32px;
-            height: 32px;
-            opacity: 0.8;
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 255, 136, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s;
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            text-decoration: none;
+            border: 1px solid var(--secondary-green);
         }
         
-        .social-icons a:hover img {
-            opacity: 1;
-            transform: scale(1.1);
+        .social-icon:hover {
+            background-color: var(--primary-green);
+            color: var(--bg-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
         }
         
         footer {
             margin-top: 3rem;
             font-size: 0.8rem;
             color: #666;
+            padding: 1rem;
+        }
+        
+        /* Session options styles */
+        .session-options {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .session-options h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .session-options p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+        
+        .input-group {
+            margin: 1.5rem 0;
+        }
+        
+        .input-group input {
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-green);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+        
+        /* About section */
+        .about-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            text-align: center;
+        }
+        
+        .about-section h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .about-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
         }
         
         /* Chat interface styles */
         .chat-container {
             display: none;
-            text-align: left;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 1.5rem;
+            height: calc(100vh - 3rem);
+            flex-direction: column;
         }
         
         .chat-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--secondary-green);
         }
         
-        .chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
+        .chat-header h2 {
+            color: var(--primary-green);
+            font-size: 1.5rem;
+        }
+        
+        .session-info {
+            font-family: 'Courier New', monospace;
+            color: var(--primary-green);
+            font-size: 1rem;
+        }
+        
+        .welcome-message {
+            margin-bottom: 1.5rem;
             padding: 1rem;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
+            background-color: rgba(0, 255, 136, 0.1);
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--primary-green);
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-green) transparent;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--primary-green);
+            border-radius: 3px;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            background-color: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid var(--primary-green);
+            animation: fadeIn 0.3s ease;
+            position: relative;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.sent {
+            background-color: rgba(0, 255, 136, 0.2);
+            border-left: 3px solid var(--accent-green);
+            margin-left: auto;
+            max-width: 80%;
+        }
+        
+        .message.received {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--secondary-green);
+            margin-right: auto;
+            max-width: 80%;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 0.3rem;
+            text-align: right;
+        }
+        
+        .message-content {
+            word-wrap: break-word;
+        }
+        
+        .media-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+            margin-top: 0.5rem;
+        }
+        
+        .message-input-container {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
         
         .message-input {
-            display: flex;
-            gap: 0.5rem;
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-green);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1rem;
         }
         
-        .message-input input {
-            flex-grow: 1;
-            padding: 0.8rem;
-            border-radius: 5px;
-            border: 1px solid var(--secondary-green);
-            background-color: rgba(0, 0, 0, 0.3);
-            color: white;
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
         }
         
         .message-options {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
         
         .option-btn {
@@ -176,41 +417,174 @@
             color: var(--primary-green);
             cursor: pointer;
             font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover {
+            background-color: rgba(0, 255, 136, 0.1);
+        }
+        
+        .option-btn i {
+            font-size: 1rem;
+        }
+        
+        .timer-options {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            z-index: 10;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--secondary-green);
+        }
+        
+        .timer-options.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .timer-option {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .timer-option:hover {
+            background-color: rgba(0, 255, 136, 0.2);
+        }
+        
+        .emoji-picker {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            z-index: 10;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--secondary-green);
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .emoji-picker.show {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .emoji:hover {
+            background-color: rgba(0, 255, 136, 0.2);
+            transform: scale(1.2);
+        }
+        
+        .end-chat-container {
+            text-align: right;
+            margin-top: 1rem;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .logo-text {
+                font-size: 2rem;
+            }
+            
+            .chat-container {
+                padding: 1rem;
+                height: calc(100vh - 2rem);
+            }
+            
+            .message.sent, .message.received {
+                max-width: 90%;
+            }
+            
+            .emoji-picker {
+                max-width: 250px;
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
     </style>
 </head>
 <body>
     <div class="theme-toggle">
-        <button class="theme-btn" id="light-mode"><img src="light-icon.png" alt="Light"></button>
-        <button class="theme-btn" id="dark-mode"><img src="dark-icon.png" alt="Dark"></button>
-        <button class="theme-btn" id="system-mode"><img src="system-icon.png" alt="System"></button>
+        <button class="theme-btn" id="light-mode" title="Light Mode"><i class="fas fa-sun"></i></button>
+        <button class="theme-btn" id="dark-mode" title="Dark Mode"><i class="fas fa-moon"></i></button>
+        <button class="theme-btn" id="system-mode" title="System Preference"><i class="fas fa-desktop"></i></button>
     </div>
     
     <div class="container" id="main-container">
-        <div class="logo">NOBODY KNOWS</div>
+        <div class="logo-container">
+            <div class="logo pulse">NK</div>
+            <div class="logo-text">NOBODY KNOWS</div>
+        </div>
         <div class="slogan" id="dynamic-slogan">SEND MESSAGE</div>
         
         <button class="btn" id="create-session-btn">Create Chat Session</button>
         
-        <div id="session-options" style="display: none;">
-            <h3>Create Chat Session</h3>
-            <p>Generate a unique ID to start a secure chat session.</p>
-            <button class="btn" id="generate-id-btn">Generate Chat ID</button>
-            
-            <div id="generated-id-container" style="display: none;">
-                <div class="session-id" id="session-id">VBXA2KRM</div>
-                <button class="btn" id="start-chat-btn">Start Chatting</button>
-                <p>Share this ID with the person you want to chat with.</p>
+        <div class="session-options" id="session-options" style="display: none;">
+            <div class="option-section">
+                <h3>Create Chat Session</h3>
+                <p>Generate a unique ID to start a secure chat session.</p>
+                <button class="btn" id="generate-id-btn">Generate Chat ID</button>
+                
+                <div id="generated-id-container" style="display: none;">
+                    <div class="session-id" id="session-id">VBXA2KRM</div>
+                    <button class="btn" id="start-chat-btn">Start Chatting</button>
+                    <p>Share this ID with the person you want to chat with.</p>
+                </div>
             </div>
             
-            <h3 style="margin-top: 2rem;">Join Chat Session</h3>
-            <p>Enter the Chat ID provided by the other user.</p>
-            <input type="text" id="join-id-input" placeholder="Enter Chat ID" style="padding: 0.8rem; width: 200px; text-align: center;">
-            <button class="btn" id="join-chat-btn">Join Chat</button>
-            <p>Make sure you enter the correct Chat ID.</p>
+            <div class="option-section" style="margin-top: 2.5rem;">
+                <h3>Join Chat Session</h3>
+                <p>Enter the Chat ID provided by the other user.</p>
+                <div class="input-group">
+                    <input type="text" id="join-id-input" placeholder="Enter Chat ID">
+                    <button class="btn" id="join-chat-btn">Join Chat</button>
+                </div>
+                <p>Make sure you enter the correct Chat ID.</p>
+            </div>
         </div>
         
-        <div style="margin-top: 3rem; text-align: left;">
+        <div class="about-section">
             <h3>What is Nobody Knows?</h3>
             <p>Nobody Knows provides secure, private, and ephemeral peer-to-peer chat sessions. Create a unique chat ID, share it, and start chatting instantly.</p>
             <p>Your messages are intended for your eyes only and are not stored on any server. Once the session ends or messages expire based on your settings, they vanish.</p>
@@ -218,8 +592,12 @@
         </div>
         
         <div class="social-icons">
-            <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank"><img src="instagram-icon.png" alt="Instagram"></a>
-            <a href="https://t.me/Sung_jin_woo_79" target="_blank"><img src="telegram-icon.png" alt="Telegram"></a>
+            <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank" class="social-icon" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://t.me/Sung_jin_woo_79" target="_blank" class="social-icon" title="Telegram">
+                <i class="fab fa-telegram"></i>
+            </a>
         </div>
         
         <footer>© 2025 All Rights Reserved By Nobody Knows.</footer>
@@ -228,31 +606,60 @@
     <div class="chat-container" id="chat-container">
         <div class="chat-header">
             <h2>Nobody Knows Chat</h2>
-            <div>Session ID: <span id="current-session-id">HOW/RKRZ</span></div>
+            <div class="session-info">Session ID: <span id="current-session-id">HOW/RKRZ</span></div>
         </div>
         
-        <p>Welcome to chat session <span id="welcome-session-id">HOW/RKRZ</span>! Messages are temporary and not stored. You can set messages to disappear automatically.</p>
+        <div class="welcome-message">
+            Welcome to chat session <span id="welcome-session-id">HOW/RKRZ</span>! Messages are temporary and not stored. You can set messages to disappear automatically.
+        </div>
         
         <div class="chat-messages" id="chat-messages">
             <!-- Messages will appear here -->
         </div>
         
-        <div class="message-input">
-            <input type="text" id="message-input" placeholder="Type your message...">
+        <div class="message-input-container">
+            <input type="text" id="message-input" placeholder="Type your message..." class="message-input">
             <button class="btn" id="send-btn">Send</button>
         </div>
         
         <div class="message-options">
-            <button class="option-btn" id="delete-timer-btn">Delete Message In</button>
-            <button class="option-btn" id="media-btn">Send Media</button>
-            <button class="option-btn" id="emoji-btn">Emojis</button>
+            <div style="position: relative;">
+                <button class="option-btn" id="delete-timer-btn">
+                    <i class="far fa-clock"></i> Delete Message In
+                </button>
+                <div class="timer-options" id="timer-options">
+                    <div class="timer-option" data-time="1">1 Minute</div>
+                    <div class="timer-option" data-time="3">3 Minutes</div>
+                    <div class="timer-option" data-time="5">5 Minutes</div>
+                    <div class="timer-option" data-time="0">Custom Time</div>
+                    <div class="timer-option" data-time="-1">Don't Delete</div>
+                </div>
+            </div>
+            
+            <button class="option-btn" id="media-btn">
+                <i class="far fa-image"></i> Send Media
+            </button>
+            
+            <div style="position: relative;">
+                <button class="option-btn" id="emoji-btn">
+                    <i class="far fa-smile"></i> Emojis
+                </button>
+                <div class="emoji-picker" id="emoji-picker">
+                    <!-- Emojis will be added by JavaScript -->
+                </div>
+            </div>
         </div>
         
-        <div style="text-align: right; margin-top: 1rem;">
-            <button class="btn" id="end-chat-btn">End Chat</button>
+        <input type="file" id="media-input" accept="image/*, video/*" style="display: none;">
+        
+        <div class="end-chat-container">
+            <button class="btn btn-secondary" id="end-chat-btn">
+                <i class="fas fa-sign-out-alt"></i> End Chat
+            </button>
         </div>
     </div>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script>
         // Dynamic slogan changer
         const slogans = [
@@ -275,10 +682,12 @@
         // Theme toggler
         document.getElementById('light-mode').addEventListener('click', () => {
             document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
         });
         
         document.getElementById('dark-mode').addEventListener('click', () => {
             document.body.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
         });
         
         document.getElementById('system-mode').addEventListener('click', () => {
@@ -287,7 +696,18 @@
             } else {
                 document.body.classList.remove('light-mode');
             }
+            localStorage.setItem('theme', 'system');
         });
+        
+        // Check saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        } else if (savedTheme === 'system') {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+            }
+        }
         
         // Chat session flow
         document.getElementById('create-session-btn').addEventListener('click', () => {
@@ -307,31 +727,222 @@
         });
         
         document.getElementById('start-chat-btn').addEventListener('click', () => {
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('chat-container').style.display = 'block';
-            document.getElementById('current-session-id').textContent = document.getElementById('session-id').textContent;
-            document.getElementById('welcome-session-id').textContent = document.getElementById('session-id').textContent;
+            const sessionId = document.getElementById('session-id').textContent;
+            startChatSession(sessionId);
         });
         
         document.getElementById('join-chat-btn').addEventListener('click', () => {
-            const joinId = document.getElementById('join-id-input').value.trim();
+            const joinId = document.getElementById('join-id-input').value.trim().toUpperCase();
             if (joinId.length === 8) {
-                document.getElementById('main-container').style.display = 'none';
-                document.getElementById('chat-container').style.display = 'block';
-                document.getElementById('current-session-id').textContent = joinId;
-                document.getElementById('welcome-session-id').textContent = joinId;
+                startChatSession(joinId);
             } else {
                 alert('Please enter a valid 8-character Chat ID');
             }
         });
         
         document.getElementById('end-chat-btn').addEventListener('click', () => {
+            endChatSession();
+        });
+        
+        // Socket.io connection
+        let socket;
+        let currentSessionId = '';
+        let messageDeleteTime = 1; // Default 1 minute
+        
+        function startChatSession(sessionId) {
+            currentSessionId = sessionId;
+            
+            // Connect to Socket.io server
+            socket = io('https://your-server-url.com', {
+                query: { sessionId }
+            });
+            
+            // Set up socket event listeners
+            socket.on('connect', () => {
+                document.getElementById('main-container').style.display = 'none';
+                document.getElementById('chat-container').style.display = 'flex';
+                document.getElementById('current-session-id').textContent = sessionId;
+                document.getElementById('welcome-session-id').textContent = sessionId;
+                
+                // Focus message input
+                document.getElementById('message-input').focus();
+            });
+            
+            socket.on('message', (data) => {
+                addMessage(data.message, data.isMedia, false, data.timestamp);
+            });
+            
+            socket.on('session-expired', () => {
+                alert('This chat session has expired. Please create a new one.');
+                endChatSession();
+            });
+            
+            socket.on('error', (error) => {
+                console.error('Socket error:', error);
+                alert('Connection error: ' + error);
+                endChatSession();
+            });
+        }
+        
+        function endChatSession() {
+            if (socket) {
+                socket.disconnect();
+            }
+            
             document.getElementById('chat-container').style.display = 'none';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('session-options').style.display = 'none';
             document.getElementById('create-session-btn').style.display = 'block';
             document.getElementById('generated-id-container').style.display = 'none';
             document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('message-input').value = '';
+            
+            currentSessionId = '';
+        }
+        
+        // Message handling
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                if (socket && socket.connected) {
+                    socket.emit('message', {
+                        message,
+                        deleteAfter: messageDeleteTime
+                    });
+                    
+                    addMessage(message, false, true, new Date().toISOString());
+                    messageInput.value = '';
+                } else {
+                    alert('Not connected to chat session');
+                }
+            }
+        }
+        
+        function addMessage(content, isMedia, isSent, timestamp) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(isSent ? 'sent' : 'received');
+            
+            const time = new Date(timestamp);
+            const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (isMedia) {
+                messageElement.innerHTML = `
+                    <div class="message-content">
+                        <img src="${content}" alt="Media" class="media-preview">
+                    </div>
+                    <div class="message-time">${timeString}</div>
+                `;
+            } else {
+                messageElement.innerHTML = `
+                    <div class="message-content">${content}</div>
+                    <div class="message-time">${timeString}</div>
+                `;
+            }
+            
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Set up message deletion if applicable
+            if (messageDeleteTime > 0) {
+                setTimeout(() => {
+                    messageElement.style.opacity = '0';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 300);
+                }, messageDeleteTime * 60 * 1000);
+            }
+        }
+        
+        // Message options
+        document.getElementById('delete-timer-btn').addEventListener('click', () => {
+            document.getElementById('timer-options').classList.toggle('show');
+        });
+        
+        document.querySelectorAll('.timer-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const time = parseInt(option.dataset.time);
+                if (time === 0) {
+                    const customTime = prompt('Enter custom deletion time in minutes:');
+                    if (customTime && !isNaN(customTime) && customTime > 0) {
+                        messageDeleteTime = parseInt(customTime);
+                    }
+                } else {
+                    messageDeleteTime = time;
+                }
+                document.getElementById('timer-options').classList.remove('show');
+            });
+        });
+        
+        // Media upload
+        document.getElementById('media-btn').addEventListener('click', () => {
+            document.getElementById('media-input').click();
+        });
+        
+        document.getElementById('media-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 50 * 1024 * 1024) { // 50MB limit
+                    alert('File size exceeds 50MB limit');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const mediaUrl = event.target.result;
+                    
+                    if (socket && socket.connected) {
+                        socket.emit('media', {
+                            mediaUrl,
+                            deleteAfter: messageDeleteTime
+                        });
+                        
+                        addMessage(mediaUrl, true, true, new Date().toISOString());
+                    } else {
+                        alert('Not connected to chat session');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Emoji picker
+        const emojis = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'];
+        
+        const emojiPicker = document.getElementById('emoji-picker');
+        emojis.forEach(emoji => {
+            const emojiElement = document.createElement('div');
+            emojiElement.classList.add('emoji');
+            emojiElement.textContent = emoji;
+            emojiElement.addEventListener('click', () => {
+                document.getElementById('message-input').value += emoji;
+                emojiPicker.classList.remove('show');
+            });
+            emojiPicker.appendChild(emojiElement);
+        });
+        
+        document.getElementById('emoji-btn').addEventListener('click', () => {
+            emojiPicker.classList.toggle('show');
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#delete-timer-btn') {
+                document.getElementById('timer-options').classList.remove('show');
+            }
+            if (!e.target.closest('#emoji-btn')) {
+                document.getElementById('emoji-picker').classList.remove('show');
+            }
         });
     </script>
 </body>
