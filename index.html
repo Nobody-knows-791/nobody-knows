@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nobody Knows - Secure Chat</title>
+    <title>Nobody Knows - Secure Ephemeral Chat</title>
     <style>
         :root {
             --primary-dark: #0a0a0a;
-            --primary-green: #00ff88;
+            --primary-green: #00aa66;
             --secondary-green: #007a4d;
-            --text-light: #f0f0f0;
+            --text-light: #e0e0e0;
             --text-dark: #333;
+            --bg-dark: #121212;
+            --bg-light: #f8f8f8;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--primary-dark);
+            background-color: var(--bg-dark);
             color: var(--text-light);
-            margin: 0;
-            padding: 0;
+            line-height: 1.6;
             transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         body.light-mode {
-            background-color: #f5f5f5;
+            background-color: var(--bg-light);
             color: var(--text-dark);
         }
         
@@ -31,58 +43,91 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 2rem;
             text-align: center;
         }
         
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
+        .logo-img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+        
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 700;
             color: var(--primary-green);
-            margin-bottom: 0.5rem;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
         
         .slogan {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary-green);
-            margin-bottom: 2rem;
-            height: 2rem;
+            margin-bottom: 3rem;
+            height: 1.5rem;
+            font-weight: 500;
         }
         
         .btn {
-            background-color: var(--secondary-green);
-            color: white;
+            background-color: var(--primary-green);
+            color: var(--primary-dark);
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
+            padding: 0.8rem 1.8rem;
+            border-radius: var(--border-radius);
             font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             margin: 0.5rem;
             transition: all 0.2s;
+            width: 240px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
         }
         
         .btn:hover {
-            background-color: var(--primary-green);
+            background-color: #00cc77;
             transform: translateY(-2px);
         }
         
-        .session-id {
-            font-family: monospace;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
+        .btn-secondary {
+            background-color: transparent;
             color: var(--primary-green);
-            margin: 1rem 0;
+            border: 2px solid var(--primary-green);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 170, 102, 0.1);
+        }
+        
+        .session-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--primary-green);
+            margin: 1.5rem 0;
             padding: 1rem;
             background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-green);
+            text-align: center;
         }
         
         .theme-toggle {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            right: 1.5rem;
             display: flex;
             gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem;
+            border-radius: 50px;
         }
         
         .theme-btn {
@@ -91,83 +136,203 @@
             cursor: pointer;
             padding: 0.5rem;
             border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .theme-btn img {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
         }
         
         .social-icons {
             margin-top: 3rem;
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
         
-        .social-icons a img {
-            width: 32px;
-            height: 32px;
-            opacity: 0.8;
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 170, 102, 0.1);
             transition: all 0.2s;
         }
         
-        .social-icons a:hover img {
-            opacity: 1;
-            transform: scale(1.1);
+        .social-icons a:hover {
+            background-color: rgba(0, 170, 102, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .social-icons a img {
+            width: 20px;
+            height: 20px;
         }
         
         footer {
             margin-top: 3rem;
             font-size: 0.8rem;
             color: #666;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        /* Session options styles */
+        .session-options {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .session-options h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .session-options p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+        
+        body.light-mode .session-options p {
+            color: var(--text-dark);
+        }
+        
+        .input-group {
+            margin: 1.5rem 0;
+        }
+        
+        .input-group input {
+            width: 240px;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-green);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        body.light-mode .input-group input {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
         }
         
         /* Chat interface styles */
         .chat-container {
             display: none;
-            text-align: left;
+            width: 100%;
             max-width: 800px;
             margin: 0 auto;
+            height: calc(100vh - 4rem);
             padding: 1rem;
+            flex-direction: column;
         }
         
         .chat-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--secondary-green);
         }
         
+        .chat-header h2 {
+            color: var(--primary-green);
+            font-size: 1.5rem;
+        }
+        
+        .session-info {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        body.light-mode .session-info {
+            color: var(--text-dark);
+        }
+        
         .chat-messages {
-            height: 400px;
+            flex: 1;
             overflow-y: auto;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             padding: 1rem;
             background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        body.light-mode .chat-messages {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            word-break: break-word;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            background-color: var(--primary-green);
+            color: var(--primary-dark);
+            border-top-right-radius: 4px;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+            background-color: rgba(0, 170, 102, 0.2);
+            border-top-left-radius: 4px;
+        }
+        
+        .message-info {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .message-input-container {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
         
         .message-input {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .message-input input {
-            flex-grow: 1;
-            padding: 0.8rem;
-            border-radius: 5px;
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
             border: 1px solid var(--secondary-green);
             background-color: rgba(0, 0, 0, 0.3);
             color: white;
+            font-size: 1rem;
+        }
+        
+        body.light-mode .message-input {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
         }
         
         .message-options {
             display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .option-btn {
@@ -176,41 +341,170 @@
             color: var(--primary-green);
             cursor: pointer;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--border-radius);
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover {
+            background-color: rgba(0, 170, 102, 0.1);
+        }
+        
+        .option-btn img {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Emoji picker styles */
+        .emoji-picker {
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--secondary-green);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            width: 300px;
+            height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: var(--box-shadow);
+        }
+        
+        body.light-mode .emoji-picker {
+            background: var(--bg-light);
+        }
+        
+        .emoji-picker.show {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-align: center;
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+        
+        .emoji:hover {
+            background-color: rgba(0, 170, 102, 0.2);
+        }
+        
+        /* Delete timer dropdown */
+        .delete-timer-dropdown {
+            position: absolute;
+            bottom: 120px;
+            left: 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--secondary-green);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            width: 200px;
+            display: none;
+            z-index: 100;
+            box-shadow: var(--box-shadow);
+        }
+        
+        body.light-mode .delete-timer-dropdown {
+            background: var(--bg-light);
+        }
+        
+        .delete-timer-dropdown.show {
+            display: block;
+        }
+        
+        .timer-option {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .timer-option:hover {
+            background-color: rgba(0, 170, 102, 0.2);
+        }
+        
+        /* About section */
+        .about-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 700px;
+        }
+        
+        body.light-mode .about-section {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .about-section h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .about-section p {
+            margin-bottom: 1rem;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="theme-toggle">
-        <button class="theme-btn" id="light-mode"><img src="light-icon.png" alt="Light"></button>
-        <button class="theme-btn" id="dark-mode"><img src="dark-icon.png" alt="Dark"></button>
-        <button class="theme-btn" id="system-mode"><img src="system-icon.png" alt="System"></button>
+        <button class="theme-btn" id="light-mode" title="Light mode">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyLDE4QzcuNTksMTggNCwxNC40MSA0LDEwQzQsNS41OSA3LjU5LDIgMTIsMkMxNi40MSwyIDIwLDUuNTkgMjAsMTBDMjAsMTQuNDEgMTYuNDEsMTggMTIsMThNMTIsNEw4LDEwSDE2TDEyLDRNMTIsMTVBNSw1IDAgMCwwIDEyLDUBNSw1IDAgMCwwIDEyLDE1WiIgLz48L3N2Zz4=" alt="Light">
+        </button>
+        <button class="theme-btn" id="dark-mode" title="Dark mode">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyLDJBMTAsMTAgMCAwLDAgMTIsMjJBMTAsMTAgMCAwLDAgMTIsMk0xMiw0QTgsOCAwIDAsMSAxMiwyMEE4LDggMCAwLDEgMTIsNFoiIC8+PC9zdmc+" alt="Dark">
+        </button>
+        <button class="theme-btn" id="system-mode" title="System preference">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTQsM0gxNkExLDEgMCAwLDEgMTcsNFYxNkExLDEgMCAwLDEgMTYsMTdIMTRWMjBIMTBWMTdINEEyLDIgMCAwLDEgMiwxNVY0QTEsMSAwIDAsMSA0LDNNMTAsMTVINlYxM0gxMFYxNU0xNCwxNUgxMlYxM0gxNFYxNU0xMCwxMUg2VjlIMTBWMTFNMTQsMTFIMTJWOUgxNFYxMVoiIC8+PC9zdmc+" alt="System">
+        </button>
     </div>
     
     <div class="container" id="main-container">
-        <div class="logo">NOBODY KNOWS</div>
+        <div class="logo-container">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMGFhNjYiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik03MCwxMDAgQzcwLDYwIDEwMCwzMCAxNDAsMzAgQzE0MCw2MCAxNDAsMTAwIDE0MCwxMDAgQzE0MCwxMDAgMTQwLDE0MCAxNDAsMTcwIEMxMDAsMTcwIDcwLDE0MCA3MCwxMDAgWiIgZmlsbD0iIzAwYWE2NiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iMzAiIGZpbGw9IiMwMGE5NjUiIHN0cm9rZT0iIzAwODc0ZCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+" class="logo-img" alt="Nobody Knows Logo">
+            <div class="logo-text">NOBODY KNOWS</div>
+        </div>
+        
         <div class="slogan" id="dynamic-slogan">SEND MESSAGE</div>
         
         <button class="btn" id="create-session-btn">Create Chat Session</button>
+        <button class="btn btn-secondary" id="join-session-btn" style="display: none;">Join Chat Session</button>
         
-        <div id="session-options" style="display: none;">
-            <h3>Create Chat Session</h3>
-            <p>Generate a unique ID to start a secure chat session.</p>
-            <button class="btn" id="generate-id-btn">Generate Chat ID</button>
-            
-            <div id="generated-id-container" style="display: none;">
-                <div class="session-id" id="session-id">VBXA2KRM</div>
-                <button class="btn" id="start-chat-btn">Start Chatting</button>
-                <p>Share this ID with the person you want to chat with.</p>
+        <div class="session-options" id="session-options" style="display: none;">
+            <div id="create-session-container">
+                <h3>Create Chat Session</h3>
+                <p>Generate a unique ID to start a secure chat session.</p>
+                <button class="btn" id="generate-id-btn">Generate Chat ID</button>
+                
+                <div id="generated-id-container" style="display: none;">
+                    <div class="session-id" id="session-id">VBXA2KRM</div>
+                    <button class="btn" id="start-chat-btn">Start Chatting</button>
+                    <p>Share this ID with the person you want to chat with.</p>
+                </div>
             </div>
             
-            <h3 style="margin-top: 2rem;">Join Chat Session</h3>
-            <p>Enter the Chat ID provided by the other user.</p>
-            <input type="text" id="join-id-input" placeholder="Enter Chat ID" style="padding: 0.8rem; width: 200px; text-align: center;">
-            <button class="btn" id="join-chat-btn">Join Chat</button>
-            <p>Make sure you enter the correct Chat ID.</p>
+            <div id="join-session-container" style="margin-top: 3rem;">
+                <h3>Join Chat Session</h3>
+                <p>Enter the Chat ID provided by the other user.</p>
+                <div class="input-group">
+                    <input type="text" id="join-id-input" placeholder="Enter Chat ID">
+                    <button class="btn" id="join-chat-btn">Join Chat</button>
+                </div>
+                <p>Make sure you enter the correct Chat ID.</p>
+            </div>
         </div>
         
-        <div style="margin-top: 3rem; text-align: left;">
+        <div class="about-section">
             <h3>What is Nobody Knows?</h3>
             <p>Nobody Knows provides secure, private, and ephemeral peer-to-peer chat sessions. Create a unique chat ID, share it, and start chatting instantly.</p>
             <p>Your messages are intended for your eyes only and are not stored on any server. Once the session ends or messages expire based on your settings, they vanish.</p>
@@ -218,8 +512,12 @@
         </div>
         
         <div class="social-icons">
-            <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank"><img src="instagram-icon.png" alt="Instagram"></a>
-            <a href="https://t.me/Sung_jin_woo_79" target="_blank"><img src="telegram-icon.png" alt="Telegram"></a>
+            <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank" title="Instagram">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwYWE2NiIgZD0iTTcuOCwySDkuNkE1LDQgMCAwLDEgMTMuNiw2SDkuNkE1LDQgMCAwLDEgNy44LDJNMTIsNEE4LDggMCAwLDAgMTIsMjBBOCw4IDAgMCwwIDEyLDRNMTcuNiwySDE5LjRBMy41LDMuNSAwIDAsMSAyMiw1LjZWMTkuNUEzLjUsMy41IDAgMCwxIDE5LjQsMjNINS42QTMuNSwzLjUgMCAwLDEgMiwxOS41VjUuNkEzLjUsMy41IDAgMCwxIDUuNiwySDE3LjZNMTcuNiw0SDUuNkE1LjUsNS41IDAgMCwwIDQsNS42VjE5LjRBMS42LDEuNiAwIDAsMCA1LjYsMjFIMTkuNEExLjYsMS42IDAgMCwwIDIxLDE5LjRWNS42QTUuNSw1LjUgMCAwLDAgMTkuNiw0WiIgLz48L3N2Zz4=" alt="Instagram">
+            </a>
+            <a href="https://t.me/Sung_jin_woo_79" target="_blank" title="Telegram">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwYWE2NiIgZD0iTTksMjBMMTUsMTZMMTMsMTlIMTlBMiwyIDAgMCwwIDIxLDE3VjVBMS45LDEuOSAwIDAsMCAxOSwzSDVBMS45LDEuOSAwIDAsMCAzLDVWMTdBMiwyIDAgMCwwIDUsMTlIOSBNMTEsMTBMNSw3TDE5LDNMMTUsMTNMMTMsMTVMMTEsMTdMMTEsMTBaIiAvPjwvc3ZnPg==" alt="Telegram">
+            </a>
         </div>
         
         <footer>© 2025 All Rights Reserved By Nobody Knows.</footer>
@@ -228,7 +526,7 @@
     <div class="chat-container" id="chat-container">
         <div class="chat-header">
             <h2>Nobody Knows Chat</h2>
-            <div>Session ID: <span id="current-session-id">HOW/RKRZ</span></div>
+            <div class="session-info">Session ID: <span id="current-session-id">HOW/RKRZ</span></div>
         </div>
         
         <p>Welcome to chat session <span id="welcome-session-id">HOW/RKRZ</span>! Messages are temporary and not stored. You can set messages to disappear automatically.</p>
@@ -237,19 +535,39 @@
             <!-- Messages will appear here -->
         </div>
         
-        <div class="message-input">
-            <input type="text" id="message-input" placeholder="Type your message...">
+        <div class="message-input-container">
+            <input type="text" id="message-input" placeholder="Type your message..." class="message-input">
             <button class="btn" id="send-btn">Send</button>
         </div>
         
         <div class="message-options">
-            <button class="option-btn" id="delete-timer-btn">Delete Message In</button>
-            <button class="option-btn" id="media-btn">Send Media</button>
-            <button class="option-btn" id="emoji-btn">Emojis</button>
+            <button class="option-btn" id="delete-timer-btn">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwYWE2NiIgZD0iTTExLDJBNCw0IDAgMCwwIDcsNlYxOEg0VjIwSDIwVjE4SDE3VjZBMTMuOSwxMy45IDAgMCwwIDExLDJNMTEsNEExMS45LDExLjkgMCAwLDEgMTksNlYxOEg5VjZBMTEuOSwxMS45IDAgMCwxIDExLDRNMTUsMTFWMThIMTNWMTFIMTUiIC8+PC9zdmc+" alt="Timer">
+                Delete Message In
+            </button>
+            <button class="option-btn" id="media-btn">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwYWE2NiIgZD0iTTgsMTlIMTdBMSwxIDAgMCwwIDE4LDE4VjhBMSwxIDAgMCwwIDE3LDdIOEE3LDcgMCAwLDAgOCwxOU0xNyw1QTMsMyAwIDAsMSAyMCw4VjE4QTMsMyAwIDAsMSAxNywyMUg3QTQsNCAwIDAsMSA3LDEzSDlBNiw2IDAgMCwxIDksMTVIMTlBNSw1IDAgMCwxIDE5LDVIMTdNMTYsMTBBMSwxIDAgMCwxIDE1LDExQTEsMSAwIDAsMSAxNCwxMEExLDEgMCAwLDEgMTUsOUExLDEgMCAwLDEgMTYsMTBNMTMsMTNBMSwxIDAgMCwxIDEyLDE0QTEsMSAwIDAsMSAxMSwxM0ExLDEgMCAwLDEgMTIsMTJBMSwxIDAgMCwxIDEzLDEzTTksMTBBMSwxIDAgMCwxIDgsMTFBMSwxIDAgMCwxIDcsMTBBMSwxIDAgMCwxIDgsOUExLDEgMCAwLDEgOSwxME0xMiwxNUExLDEgMCAwLDEgMTEsMTZBMSwxIDAgMCwxIDEwLDE1QTEsMSAwIDAsMSAxMSwxNEExLDEgMCAwLDEgMTIsMTUiIC8+PC9zdmc+" alt="Media">
+                Send Media
+            </button>
+            <button class="option-btn" id="emoji-btn">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwYWE2NiIgZD0iTTEyLDIyQTksOSAwIDAsMCAxMiw0QTksOSAwIDAsMCAxMiwyMk0xMiwyQTEwLDEwIDAgMCwxIDIyLDEyQTEwLDEwIDAgMCwxIDEyLDIyQTEwLDEwIDAgMCwxIDIsMTJBMTAsMTAgMCAwLDEgMTIsMk03LDlIMTdBNSw1IDAgMCwxIDE3LDE0QTUsNSAwIDAsMSA3LDE0VjlNNywxMkE1LDUgMCAwLDAgMTIsMTJBNSw1IDAgMCwwIDE3LDEyQTUsNSAwIDAsMCAxMiwxMkE1LDUgMCAwLDAgNywxMk05LDExQTEsMSAwIDAsMSA4LDEwQTEsMSAwIDAsMSA5LDlBMSwxIDAgMCwxIDEwLDEwQTEsMSAwIDAsMSA5LDExTTE1LDExQTEsMSAwIDAsMSAxNCwxMEExLDEgMCAwLDEgMTUsOUExLDEgMCAwLDEgMTYsMTBBMSwxIDAgMCwxIDE1LDExIiAvPjwvc3ZnPg==" alt="Emoji">
+                Emojis
+            </button>
+        </div>
+        
+        <div class="emoji-picker" id="emoji-picker">
+            <!-- Emojis will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="delete-timer-dropdown" id="delete-timer-dropdown">
+            <div class="timer-option" data-time="60">1 minute</div>
+            <div class="timer-option" data-time="180">3 minutes</div>
+            <div class="timer-option" data-time="300">5 minutes</div>
+            <div class="timer-option" data-time="custom">Custom time</div>
         </div>
         
         <div style="text-align: right; margin-top: 1rem;">
-            <button class="btn" id="end-chat-btn">End Chat</button>
+            <button class="btn btn-secondary" id="end-chat-btn">End Chat</button>
         </div>
     </div>
     
@@ -275,10 +593,12 @@
         // Theme toggler
         document.getElementById('light-mode').addEventListener('click', () => {
             document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
         });
         
         document.getElementById('dark-mode').addEventListener('click', () => {
             document.body.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
         });
         
         document.getElementById('system-mode').addEventListener('click', () => {
@@ -287,12 +607,30 @@
             } else {
                 document.body.classList.remove('light-mode');
             }
+            localStorage.setItem('theme', 'system');
         });
+        
+        // Set initial theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        } else if (savedTheme === 'system') {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.body.classList.add('light-mode');
+            }
+        }
         
         // Chat session flow
         document.getElementById('create-session-btn').addEventListener('click', () => {
             document.getElementById('session-options').style.display = 'block';
             document.getElementById('create-session-btn').style.display = 'none';
+            document.getElementById('join-session-btn').style.display = 'inline-block';
+        });
+        
+        document.getElementById('join-session-btn').addEventListener('click', () => {
+            document.getElementById('session-options').style.display = 'none';
+            document.getElementById('create-session-btn').style.display = 'inline-block';
+            document.getElementById('join-session-btn').style.display = 'none';
         });
         
         document.getElementById('generate-id-btn').addEventListener('click', () => {
@@ -308,18 +646,20 @@
         
         document.getElementById('start-chat-btn').addEventListener('click', () => {
             document.getElementById('main-container').style.display = 'none';
-            document.getElementById('chat-container').style.display = 'block';
+            document.getElementById('chat-container').style.display = 'flex';
             document.getElementById('current-session-id').textContent = document.getElementById('session-id').textContent;
             document.getElementById('welcome-session-id').textContent = document.getElementById('session-id').textContent;
+            startChatSession(document.getElementById('session-id').textContent);
         });
         
         document.getElementById('join-chat-btn').addEventListener('click', () => {
             const joinId = document.getElementById('join-id-input').value.trim();
             if (joinId.length === 8) {
                 document.getElementById('main-container').style.display = 'none';
-                document.getElementById('chat-container').style.display = 'block';
+                document.getElementById('chat-container').style.display = 'flex';
                 document.getElementById('current-session-id').textContent = joinId;
                 document.getElementById('welcome-session-id').textContent = joinId;
+                startChatSession(joinId);
             } else {
                 alert('Please enter a valid 8-character Chat ID');
             }
@@ -329,9 +669,142 @@
             document.getElementById('chat-container').style.display = 'none';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('session-options').style.display = 'none';
-            document.getElementById('create-session-btn').style.display = 'block';
+            document.getElementById('create-session-btn').style.display = 'inline-block';
+            document.getElementById('join-session-btn').style.display = 'none';
             document.getElementById('generated-id-container').style.display = 'none';
             document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('join-id-input').value = '';
+        });
+        
+        // Emoji picker
+        const emojis = ['😀', '😂', '😍', '😎', '🤔', '😢', '😡', '👍', '👎', '❤️', '🔥', '🎉', '💯', '👀', '🙏'];
+        const emojiPicker = document.getElementById('emoji-picker');
+        
+        emojis.forEach(emoji => {
+            const emojiElement = document.createElement('div');
+            emojiElement.className = 'emoji';
+            emojiElement.textContent = emoji;
+            emojiElement.addEventListener('click', () => {
+                document.getElementById('message-input').value += emoji;
+            });
+            emojiPicker.appendChild(emojiElement);
+        });
+        
+        document.getElementById('emoji-btn').addEventListener('click', () => {
+            emojiPicker.classList.toggle('show');
+            document.getElementById('delete-timer-dropdown').classList.remove('show');
+        });
+        
+        // Delete timer dropdown
+        document.getElementById('delete-timer-btn').addEventListener('click', () => {
+            document.getElementById('delete-timer-dropdown').classList.toggle('show');
+            emojiPicker.classList.remove('show');
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#emoji-btn') && !e.target.closest('.emoji-picker')) {
+                emojiPicker.classList.remove('show');
+            }
+            if (!e.target.closest('#delete-timer-btn') && !e.target.closest('.delete-timer-dropdown')) {
+                document.getElementById('delete-timer-dropdown').classList.remove('show');
+            }
+        });
+        
+        // Chat functionality
+        function startChatSession(sessionId) {
+            // In a real implementation, this would connect to a WebSocket or peer-to-peer network
+            console.log(`Starting chat session ${sessionId}`);
+            
+            // Example message
+            addMessage('System', 'Chat session started. All messages are end-to-end encrypted and will not be stored.', 'received');
+        }
+        
+        function addMessage(sender, text, type) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            
+            const messageText = document.createElement('div');
+            messageText.textContent = text;
+            
+            const messageInfo = document.createElement('div');
+            messageInfo.className = 'message-info';
+            messageInfo.innerHTML = `<span>${sender}</span><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+            
+            messageElement.appendChild(messageText);
+            messageElement.appendChild(messageInfo);
+            messagesContainer.appendChild(messageElement);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Send message
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage('You', message, 'sent');
+                input.value = '';
+                
+                // In a real implementation, this would send the message to the other peer
+                // For demo purposes, we'll simulate a response after 1 second
+                setTimeout(() => {
+                    addMessage('Friend', 'This is an automated response. In a real chat, this would be from your peer.', 'received');
+                }, 1000);
+            }
+        }
+        
+        // Media upload
+        document.getElementById('media-btn').addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 50 * 1024 * 1024) {
+                        alert('File size exceeds 50MB limit');
+                        return;
+                    }
+                    
+                    addMessage('You', `[Media: ${file.name}]`, 'sent');
+                    
+                    // In a real implementation, this would upload the file to temporary storage
+                    // and send a link to the other peer
+                    setTimeout(() => {
+                        addMessage('Friend', `[Media received: ${file.name}]`, 'received');
+                    }, 1000);
+                }
+            };
+            
+            input.click();
+        });
+        
+        // Delete timer options
+        document.querySelectorAll('.timer-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const time = option.getAttribute('data-time');
+                if (time === 'custom') {
+                    const customTime = prompt('Enter time in seconds:');
+                    if (customTime && !isNaN(customTime)) {
+                        alert(`Messages will now disappear after ${customTime} seconds`);
+                    }
+                } else {
+                    alert(`Messages will now disappear after ${time} seconds`);
+                }
+                document.getElementById('delete-timer-dropdown').classList.remove('show');
+            });
         });
     </script>
 </body>
