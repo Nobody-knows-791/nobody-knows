@@ -9,11 +9,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #1C2526;
+            background-color: #000000;
             color: #fff;
             transition: background-color 0.3s, color 0.3s;
         }
@@ -35,7 +35,7 @@
 
         .logo {
             font-size: 2.5rem;
-            color: #34C759;
+            color: #075E54;
             margin-bottom: 10px;
             font-weight: bold;
         }
@@ -47,7 +47,7 @@
 
         .slogan {
             font-size: 1.2rem;
-            color: #34C759;
+            color: #075E54;
             margin: 10px 0;
         }
 
@@ -79,7 +79,7 @@
         }
 
         .create-btn {
-            background-color: #34C759;
+            background-color: #075E54;
             color: #fff;
         }
 
@@ -89,12 +89,16 @@
         }
 
         .back-btn {
-            background-color: #555;
-            color: #fff;
             position: absolute;
-            top: 20px;
-            left: 20px;
-            width: auto;
+            top: 35px;
+            left: 35px;
+            font-size: 1.02rem;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-shadow: 1px 1px 1px #000, -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000;
         }
 
         .info {
@@ -107,13 +111,28 @@
         .footer {
             position: absolute;
             bottom: 10px;
-            font-size: 0.8rem;
+            width: 100%;
+            text-align: center;
+            color: #FFFFFF;
+        }
+
+        .footer .social-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
         }
 
         .footer a {
-            margin: 0 10px;
             text-decoration: none;
-            color: #34C759;
+            color: #FFFFFF;
+            font-size: 1rem;
+        }
+
+        .footer .copyright {
+            font-size: 0.8rem;
+            text-transform: uppercase;
         }
 
         .chat-container {
@@ -138,7 +157,7 @@
 
         .chat-header .session-id {
             font-size: 0.9rem;
-            color: #34C759;
+            color: #075E54;
         }
 
         .chat-header .end-session {
@@ -166,7 +185,7 @@
         }
 
         .message.sent {
-            background-color: #34C759;
+            background-color: #075E54;
             color: #fff;
             margin-left: auto;
         }
@@ -295,7 +314,7 @@
     </div>
 
     <div class="container hidden" id="optionsContainer">
-        <button class="button back-btn" onclick="showMain()">⬅</button>
+        <button class="back-btn" onclick="showMain()">←</button>
         <div class="create-session-box">
             <div class="logo">NK</div>
             <h2>Create Chat Session</h2>
@@ -311,7 +330,7 @@
     </div>
 
     <div class="container hidden" id="joinContainer">
-        <button class="button back-btn" onclick="showOptions()">⬅</button>
+        <button class="back-btn" onclick="showOptions()">←</button>
         <div class="join-session-box">
             <div class="logo">NK</div>
             <h2>Join Chat Session</h2>
@@ -361,9 +380,11 @@
     </div>
 
     <div class="footer">
-        © 2025 ALL RIGHTS RESERVED BY NOBODY KNOWS.
-        <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank">📷</a>
-        <a href="https://t.me/Sung_jin_woo_79" target="_blank">✈️</a>
+        <div class="social-icons">
+            <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank">📷</a>
+            <a href="https://t.me/Sung_jin_woo_79" target="_blank">✈️</a>
+        </div>
+        <div class="copyright">© 2025 ALL RIGHTS RESERVED BY NOBODY KNOWS.</div>
     </div>
 
     <script>
@@ -411,11 +432,30 @@
             document.getElementById('chatContainer').classList.add('hidden');
         }
 
-        function createChat() {
+        async function createChat() {
             chatId = 'VBX' + Math.random().toString(36).substr(2, 3).toUpperCase() + 'KRM';
             document.getElementById('chatIdText').textContent = chatId;
             document.getElementById('chatIdBox').classList.remove('hidden');
             document.getElementById('startChatBtn').classList.remove('hidden');
+
+            // Store the chat session in MongoDB
+            try {
+                const response = await fetch('http://localhost:3000/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chatId: chatId, status: 'active' })
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    alert('Failed to create chat session');
+                    chatId = '';
+                    document.getElementById('chatIdBox').classList.add('hidden');
+                    document.getElementById('startChatBtn').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error creating chat session:', error);
+                alert('Error creating chat session');
+            }
         }
 
         function copyChatId() {
@@ -423,12 +463,26 @@
             alert('Chat ID copied to clipboard!');
         }
 
-        function joinChat() {
-            chatId = document.getElementById('chatIdInput').value.trim();
-            if (chatId) {
-                startChat();
-            } else {
+        async function joinChat() {
+            const inputChatId = document.getElementById('chatIdInput').value.trim();
+            if (!inputChatId) {
                 alert('Please enter a valid Chat ID');
+                return;
+            }
+
+            // Validate the chat ID against MongoDB
+            try {
+                const response = await fetch(`http://localhost:3000/validate-session/${inputChatId}`);
+                const result = await response.json();
+                if (result.success && result.session.status === 'active') {
+                    chatId = inputChatId;
+                    startChat();
+                } else {
+                    alert('Invalid or expired Chat ID');
+                }
+            } catch (error) {
+                console.error('Error validating chat session:', error);
+                alert('Error validating chat session');
             }
         }
 
@@ -445,7 +499,18 @@
             renderMessages();
         }
 
-        function endChat() {
+        async function endChat() {
+            // Mark the chat session as expired in MongoDB
+            try {
+                await fetch('http://localhost:3000/end-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chatId: chatId })
+                });
+            } catch (error) {
+                console.error('Error ending chat session:', error);
+            }
+
             chatId = '';
             messages = [
                 { text: 'Welcome to chat session! Messages are temporary and not stored. You can set messages to disappear automatically.', type: 'received', time: '03:21 PM' }
