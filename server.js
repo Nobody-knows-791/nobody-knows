@@ -1,70 +1,86 @@
+// server.js
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+const { v4: uuidv4 } = require('uuid');
 const app = express();
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://madara_bot:S4xUPFkqxyeq26Nb@cluster0.lq2wx.mongodb.net/nobodyknows?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+// Session Schema
+const sessionSchema = new mongoose.Schema({
+    sessionId: { type: String, unique: true },
+    createdAt: { type: Date, default: Date.now, expires: '24h' }, // Sessions expire after 24h
+    active: { type: Boolean, default: true },
+    participants: { type: Number, default: 0 }
+});
+
+const Session = mongoose.model('Session', sessionSchema);
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://madara_bot:S4xUPFkqxyeq26Nb@cluster0.lq2wx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Define Chat Session Schema
-const chatSessionSchema = new mongoose.Schema({
-    chatId: { type: String, required: true, unique: true },
-    status: { type: String, enum: ['active', 'expired'], default: 'active' },
-    createdAt: { type: Date, default: Date.now }
-});
-
-const ChatSession = mongoose.model('ChatSession', chatSessionSchema);
-
-// Create a new chat session
-app.post('/create-session', async (req, res) => {
-    const { chatId } = req.body;
+// API Endpoints
+app.post('/api/session/create', async (req, res) => {
     try {
-        const session = new ChatSession({ chatId });
-        await session.save();
-        res.json({ success: true });
+        const sessionId = generateSessionId();
+        const newSession = new Session({
+            sessionId,
+            active: true
+        });
+        await newSession.save();
+        res.json({ success: true, sessionId });
     } catch (error) {
-        console.error('Error creating session:', error);
-        res.status(500).json({ success: false, error: 'Failed to create session' });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Validate a chat session
-app.get('/validate-session/:chatId', async (req, res) => {
-    const { chatId } = req.params;
+app.post('/api/session/join', async (req, res) => {
     try {
-        const session = await ChatSession.findOne({ chatId });
-        if (session) {
-            res.json({ success: true, session });
-        } else {
-            res.json({ success: false, error: 'Session not found' });
+        const { sessionId } = req.body;
+        const session = await Session.findOne({ sessionId });
+        
+        if (!session || !session.active) {
+            return res.json({ success: false, error: 'Invalid or expired session ID' });
         }
+        
+        // Increment participant count
+        session.participants += 1;
+        await session.save();
+        
+        res.json({ success: true, sessionId });
     } catch (error) {
-        console.error('Error validating session:', error);
-        res.status(500).json({ success: false, error: 'Failed to validate session' });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// End a chat session
-app.post('/end-session', async (req, res) => {
-    const { chatId } = req.body;
+app.post('/api/session/end', async (req, res) => {
     try {
-        await ChatSession.updateOne({ chatId }, { status: 'expired' });
+        const { sessionId } = req.body;
+        await Session.findOneAndUpdate(
+            { sessionId },
+            { active: false }
+        );
         res.json({ success: true });
     } catch (error) {
-        console.error('Error ending session:', error);
-        res.status(500).json({ success: false, error: 'Failed to end session' });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+function generateSessionId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid confusing characters
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
