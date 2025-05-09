@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nobody Knows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #1C2526;
+            color: #fff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: #34C759;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .slogan {
+            font-size: 1.2rem;
+            color: #34C759;
+            margin: 10px 0;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .create-btn {
+            background-color: #34C759;
+            color: #fff;
+        }
+
+        .join-btn {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .back-btn {
+            background-color: #555;
+            color: #fff;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: auto;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #34C759;
+        }
+
+        .chat-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .chat-header .logo {
+            font-size: 1.5rem;
+        }
+
+        .chat-header .session-id {
+            font-size: 0.9rem;
+            color: #34C759;
+        }
+
+        .chat-header .end-session {
+            background-color: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #222;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            max-width: 70%;
+            background-color: #333;
+        }
+
+        .message.sent {
+            background-color: #34C759;
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background-color: #444;
+            color: #fff;
+            margin-right: auto;
+        }
+
+        .message .time {
+            font-size: 0.7rem;
+            color: #aaa;
+            float: right;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .chat-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .emoji-picker span {
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin: 5px;
+        }
+
+        .timer-options {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .timer-options button {
+            display: block;
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .create-session-box, .join-session-box {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .chat-id-display {
+            background-color: #444;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-id-input {
+            background-color: #444;
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            width: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <span class="theme-toggle" onclick="toggleTheme()">🌙</span>
+        <div class="logo">NK</div>
+        <h1 class="title">NOBODY KNOWS</h1>
+        <p class="slogan" id="slogan">SEND MESSAGE</p>
+        <button class="button create-btn" onclick="showOptions()">Create Chat Session</button>
+        <button class="button join-btn" onclick="showJoin()">Join Chat Session</button>
+        <div class="info">
+            <h3>What is Nobody Knows?</h3>
+            <p>Nobody Knows provides secure, private, and ephemeral peer-to-peer chat sessions. Create a unique chat ID, share it, and start chatting instantly.</p>
+            <p>Your messages are intended for your eyes only and are not stored on any server. Once the session ends or messages expire based on your settings, they vanish.</p>
+            <p>Built with privacy in mind. Enjoy your conversation knowing nobody else is listening (or storing it!). Created by Nobody Knows Team.</p>
+        </div>
+    </div>
+
+    <div class="container hidden" id="optionsContainer">
+        <button class="button back-btn" onclick="showMain()">⬅</button>
+        <div class="create-session-box">
+            <div class="logo">NK</div>
+            <h2>Create Chat Session</h2>
+            <p>Generate a unique ID to start a secure chat session.</p>
+            <button class="button create-btn" onclick="createChat()">Generate Chat ID</button>
+            <div class="chat-id-display hidden" id="chatIdBox">
+                <span id="chatIdText"></span>
+                <button onclick="copyChatId()">📋</button>
+            </div>
+            <button class="button join-btn hidden" id="startChatBtn" onclick="startChat()">Start Chatting</button>
+            <p>Share this ID with the person you want to chat with.</p>
+        </div>
+    </div>
+
+    <div class="container hidden" id="joinContainer">
+        <button class="button back-btn" onclick="showOptions()">⬅</button>
+        <div class="join-session-box">
+            <div class="logo">NK</div>
+            <h2>Join Chat Session</h2>
+            <p>Enter the Chat ID provided by the other user.</p>
+            <input type="text" id="chatIdInput" class="chat-id-input" placeholder="Enter Chat ID">
+            <button class="button create-btn" onclick="joinChat()">Join Chat</button>
+            <p>Make sure you enter the correct Chat ID.</p>
+        </div>
+    </div>
+
+    <div class="chat-container hidden" id="chatContainer">
+        <div class="chat-header">
+            <div>
+                <span class="logo">NK</span>
+                <span>Nobody Knows Chat</span>
+                <div class="session-id">Session ID: <span id="chatIdDisplay"></span></div>
+            </div>
+            <button class="end-session" onclick="endChat()">✖ End Session</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message">
+                Welcome to chat session <span id="chatIdWelcome"></span>! Messages are temporary and not stored. You can set messages to disappear automatically.
+                <span class="time">03:21 PM</span>
+            </div>
+        </div>
+        <div class="chat-input">
+            <button onclick="document.getElementById('mediaInput').click()">📎</button>
+            <input type="file" id="mediaInput" style="display: none;" onchange="sendMedia(this)">
+            <button onclick="toggleEmojiPicker()">😊</button>
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">➤</button>
+            <button onclick="toggleTimerOptions()">⏰</button>
+        </div>
+        <div class="emoji-picker" id="emojiPicker">
+            <span onclick="addEmoji('😊')">😊</span>
+            <span onclick="addEmoji('😂')">😂</span>
+            <span onclick="addEmoji('❤️')">❤️</span>
+            <span onclick="addEmoji('👍')">👍</span>
+            <span onclick="addEmoji('😍')">😍</span>
+        </div>
+        <div class="timer-options" id="timerOptions">
+            <button onclick="setTimer(60)">1 min</button>
+            <button onclick="setTimer(180)">3 min</button>
+            <button onclick="setTimer(300)">5 min</button>
+            <button onclick="setCustomTimer()">Custom</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 ALL RIGHTS RESERVED BY NOBODY KNOWS.
+        <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank">📷</a>
+        <a href="https://t.me/Sung_jin_woo_79" target="_blank">✈️</a>
+    </div>
+
+    <script>
+        let currentTheme = 'dark';
+        let chatId = '';
+        let messages = [
+            { text: 'Welcome to chat session! Messages are temporary and not stored. You can set messages to disappear automatically.', type: 'received', time: '03:21 PM' }
+        ];
+        let timer = null;
+
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.querySelector('.theme-toggle').textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        const slogans = ['SEND MESSAGE', 'ENCRYPTED TEXT', 'NO METADATA', 'NO DATA SAVED'];
+        let sloganIndex = 0;
+        function updateSlogan() {
+            document.getElementById('slogan').textContent = slogans[sloganIndex];
+            sloganIndex = (sloganIndex + 1) % slogans.length;
+        }
+        setInterval(updateSlogan, 2000);
+
+        function showMain() {
+            document.getElementById('mainContainer').classList.remove('hidden');
+            document.getElementById('optionsContainer').classList.add('hidden');
+            document.getElementById('joinContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+        }
+
+        function showOptions() {
+            document.getElementById('mainContainer').classList.add('hidden');
+            document.getElementById('optionsContainer').classList.remove('hidden');
+            document.getElementById('joinContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+            document.getElementById('chatIdBox').classList.add('hidden');
+            document.getElementById('startChatBtn').classList.add('hidden');
+        }
+
+        function showJoin() {
+            document.getElementById('mainContainer').classList.add('hidden');
+            document.getElementById('optionsContainer').classList.add('hidden');
+            document.getElementById('joinContainer').classList.remove('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+        }
+
+        function createChat() {
+            chatId = 'VBX' + Math.random().toString(36).substr(2, 3).toUpperCase() + 'KRM';
+            document.getElementById('chatIdText').textContent = chatId;
+            document.getElementById('chatIdBox').classList.remove('hidden');
+            document.getElementById('startChatBtn').classList.remove('hidden');
+        }
+
+        function copyChatId() {
+            navigator.clipboard.writeText(chatId);
+            alert('Chat ID copied to clipboard!');
+        }
+
+        function joinChat() {
+            chatId = document.getElementById('chatIdInput').value.trim();
+            if (chatId) {
+                startChat();
+            } else {
+                alert('Please enter a valid Chat ID');
+            }
+        }
+
+        function startChat() {
+            document.getElementById('mainContainer').classList.add('hidden');
+            document.getElementById('optionsContainer').classList.add('hidden');
+            document.getElementById('joinContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.remove('hidden');
+            document.getElementById('chatIdDisplay').textContent = chatId;
+            document.getElementById('chatIdWelcome').textContent = chatId;
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+            renderMessages();
+        }
+
+        function endChat() {
+            chatId = '';
+            messages = [
+                { text: 'Welcome to chat session! Messages are temporary and not stored. You can set messages to disappear automatically.', type: 'received', time: '03:21 PM' }
+            ];
+            document.getElementById('chatMessages').innerHTML = '';
+            if (timer) clearTimeout(timer);
+            showMain();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message) {
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                messages.push({ text: message, type: 'sent', time: time });
+                renderMessages();
+                input.value = '';
+                simulateReply();
+            }
+        }
+
+        function sendMedia(input) {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File size exceeds 50MB limit');
+                    return;
+                }
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                messages.push({ text: `Media: ${file.name}`, type: 'sent', time: time });
+                renderMessages();
+                input.value = '';
+                simulateReply();
+            }
+        }
+
+        function simulateReply() {
+            setTimeout(() => {
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                messages.push({ text: 'This is a simulated reply!', type: 'received', time: time });
+                renderMessages();
+            }, 1000);
+        }
+
+        function renderMessages() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `message ${msg.type}`;
+                div.innerHTML = `${msg.text}<span class="time">${msg.time}</span>`;
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addEmoji(emoji) {
+            const input = document.getElementById('messageInput');
+            input.value += emoji;
+            toggleEmojiPicker();
+        }
+
+        function toggleTimerOptions() {
+            const options = document.getElementById('timerOptions');
+            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function setTimer(seconds) {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+                messages = [
+                    { text: 'Welcome to chat session! Messages are temporary and not stored. You can set messages to disappear automatically.', type: 'received', time: '03:21 PM' }
+                ];
+                renderMessages();
+                alert('Messages have been deleted based on the timer setting.');
+            }, seconds * 1000);
+            toggleTimerOptions();
+        }
+
+        function setCustomTimer() {
+            const seconds = prompt('Enter custom time in seconds:');
+            if (seconds && !isNaN(seconds)) {
+                setTimer(parseInt(seconds));
+            }
+        }
+    </script>
+</body>
+</html>
