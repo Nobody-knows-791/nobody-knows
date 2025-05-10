@@ -13,9 +13,14 @@ const client = new MongoClient(uri);
 let db;
 
 async function connectDB() {
-    await client.connect();
-    db = client.db('nobodyknows');
-    console.log('Connected to MongoDB');
+    try {
+        await client.connect();
+        db = client.db('nobodyknows');
+        console.log('Connected to MongoDB');
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    }
 }
 
 connectDB();
@@ -26,50 +31,65 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.post('/create-session', async (req, res) => {
-    const chatId = crypto.randomBytes(4).toString('hex');
-    const maxUsers = req.body.maxUsers || 2;
-    await db.collection('sessions').insertOne({
-        chatId,
-        status: 'active',
-        maxUsers,
-        createdAt: new Date()
-    });
-    sessions.set(chatId, new Set());
-    res.json({ chatId });
+    try {
+        const chatId = crypto.randomBytes(4).toString('hex');
+        const maxUsers = req.body.maxUsers || 2;
+        await db.collection('sessions').insertOne({
+            chatId,
+            status: 'active',
+            maxUsers,
+            createdAt: new Date()
+        });
+        sessions.set(chatId, new Set());
+        res.status(200).json({ chatId });
+    } catch (err) {
+        console.error('Error creating session:', err);
+        res.status(500).json({ error: 'Failed to create session' });
+    }
 });
 
 app.get('/join-session/:chatId', async (req, res) => {
-    const chatId = req.params.chatId;
-    const session = await db.collection('sessions').findOne({ chatId });
-    if (session && session.status === 'active') {
-        const clients = sessions.get(chatId) || new Set();
-        if (clients.size < session.maxUsers) {
-            res.json({ success: true });
+    try {
+        const chatId = req.params.chatId;
+        const session = await db.collection('sessions').findOne({ chatId });
+        if (session && session.status === 'active') {
+            const clients = sessions.get(chatId) || new Set();
+            if (clients.size < session.maxUsers) {
+                res.status(200).json({ success: true });
+            } else {
+                res.status(400).json({ success: false, message: 'Max users reached' });
+            }
         } else {
-            res.json({ success: false, message: 'Max users reached' });
+            res.status(400).json({ success: false, message: 'Session expired or invalid' });
         }
-    } else {
-        res.json({ success: false, message: 'Session expired or invalid' });
+    } catch (err) {
+        console.error('Error joining session:', err);
+        res.status(500).json({ error: 'Failed to join session' });
     }
 });
 
 app.post('/end-session/:chatId', async (req, res) => {
-    const chatId = req.params.chatId;
-    await db.collection('sessions').updateOne(
-        { chatId },
-        { $set: { status: 'expired', endedAt: new Date() } }
-    );
-    const clients = sessions.get(chatId);
-    if (clients) {
-        clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ message: 'Session ended by creator' }));
-                client.close();
-            }
-        });
-        sessions.delete(chatId);
+    try {
+        const chatId = req.params.chatId;
+        await db.collection('sessions').updateOne(
+            { chatId },
+            { $set: { status: 'expired', endedAt: new Date() } }
+        );
+        const clients = sessions.get(chatId);
+        if (clients) {
+            clients.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ message: 'Session ended by creator' }));
+                    client.close();
+                }
+            });
+            sessions.delete(chatId);
+        }
+        res.status(200).json({ success: true });
+    } catch (err) {
+        console.error('Error ending session:', err);
+        res.status(500).json({ error: 'Failed to end session' });
     }
-    res.json({ success: true });
 });
 
 wss.on('connection', (ws, req) => {
@@ -88,12 +108,16 @@ wss.on('connection', (ws, req) => {
         sessions.set(chatId, clients);
 
         ws.on('message', (data) => {
-            const message = JSON.parse(data);
-            clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(message));
-                }
-            });
+            try {
+                const message = JSON.parse(data);
+                clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify(message));
+                    }
+                });
+            } catch (err) {
+                console.error('WebSocket message error:', err);
+            }
         });
 
         ws.on('close', () => {
@@ -102,6 +126,9 @@ wss.on('connection', (ws, req) => {
                 sessions.delete(chatId);
             }
         });
+    }).catch(err => {
+        console.error('WebSocket connection error:', err);
+        ws.close();
     });
 });
 
