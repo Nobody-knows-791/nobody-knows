@@ -29,38 +29,44 @@
             opacity: 1;
         }
         .btn-primary {
-            background-color: #10b981;
+            background: linear-gradient(to right, #10b981, #059669);
             color: white;
             padding: 0.75rem 1.5rem;
+            border: 1px solid #059669;
             border-radius: 0.5rem;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: background 0.2s;
         }
         .btn-primary:hover {
-            background-color: #059669;
+            background: linear-gradient(to right, #059669, #047857);
         }
         .btn-secondary {
-            background-color: #6b7280;
+            background: linear-gradient(to right, #6b7280, #4b5563);
             color: white;
             padding: 0.75rem 1.5rem;
+            border: 1px solid #4b5563;
             border-radius: 0.5rem;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: background 0.2s;
         }
         .btn-secondary:hover {
-            background-color: #4b5563;
+            background: linear-gradient(to right, #4b5563, #374151);
         }
         .btn-danger {
-            background-color: #ef4444;
+            background: linear-gradient(to right, #ef4444, #dc2626);
             color: white;
             padding: 0.5rem 1rem;
+            border: 1px solid #dc2626;
             border-radius: 0.5rem;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: background 0.2s;
         }
         .btn-danger:hover {
-            background-color: #dc2626;
+            background: linear-gradient(to right, #dc2626, #b91c1c);
         }
         .btn-back {
             color: #10b981;
-            font-weight: bold;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -104,6 +110,11 @@
             position: absolute;
             bottom: 4rem;
             z-index: 10;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        .dark .emoji-mart {
+            border-color: #4b5563;
         }
         .chat-id-container {
             display: flex;
@@ -111,20 +122,18 @@
             gap: 0.5rem;
             background-color: #f3f4f6;
             padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             max-width: 20rem;
             margin: 1rem auto;
         }
         .dark .chat-id-container {
             background-color: #374151;
+            border-color: #4b5563;
         }
         .chat-id-text {
             font-size: 0.875rem;
             font-family: 'Courier New', Courier, monospace;
-            color: #1f2937;
-        }
-        .dark .chat-id-text {
-            color: #e5e7eb;
         }
         .select-users {
             background-color: #ffffff;
@@ -143,23 +152,38 @@
         .dark .select-users {
             background-color: #374151;
             border-color: #4b5563;
-            color: #e5e7eb;
         }
-        .text-primary {
+        .text-theme {
             color: #1f2937;
         }
-        .dark .text-primary {
+        .dark .text-theme {
+            color: #e5e7eb;
+        }
+        .input-theme {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            color: #1f2937;
+        }
+        .dark .input-theme {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+        .theme-toggle-icon {
+            color: #1f2937;
+        }
+        .dark .theme-toggle-icon {
             color: #e5e7eb;
         }
     </style>
 </head>
 <body class="light">
     <header class="text-center py-12">
-        <img src="logo.png" alt="Nobody Knows Logo" class="mx-auto h-32">
+        <img src="/logo.png" alt="Nobody Knows Logo" class="mx-auto h-32">
         <h1 class="text-5xl font-bold text-green-600 mt-4">Nobody Knows</h1>
-        <p class="slogan text-xl mt-3 text-primary">Send <span id="slogan-word" class="text-white font-medium">Message</span></p>
+        <p class="slogan text-xl mt-3 text-theme">Send <span id="slogan-word" class="text-white font-medium">Private</span></p>
         <button id="theme-toggle" class="mt-6 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition" aria-label="Toggle theme">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 theme-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
             </svg>
         </button>
@@ -187,7 +211,7 @@
                 Back
             </button>
             <div class="max-w-xs mx-auto">
-                <select id="max-users" class="select-users">
+                <select id="max-users" class="select-users text-theme">
                     <option value="2">2 Users</option>
                     <option value="3">3 Users</option>
                     <option value="4">4 Users</option>
@@ -196,9 +220,9 @@
                 <button id="generate-chat" class="btn-primary mt-4 w-full">Generate Chat ID</button>
             </div>
             <div id="chat-id-display" class="hidden chat-id-container">
-                <span id="chat-id-text" class="chat-id-text"></span>
+                <span id="chat-id-text" class="chat-id-text text-theme"></span>
                 <button id="copy-chat-id" class="p-1 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" aria-label="Copy Chat ID">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <svg class="w-5 h-5 text-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 </button>
             </div>
         </section>
@@ -209,7 +233,7 @@
                 Back
             </button>
             <div class="max-w-xs mx-auto">
-                <input id="join-chat-id" type="text" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter Chat ID">
+                <input id="join-chat-id" type="text" class="w-full p-3 rounded-lg input-theme focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter Chat ID">
                 <button id="submit-join" class="btn-secondary mt-4 w-full">Join Chat</button>
             </div>
             <p id="error-message" class="hidden text-red-600 mt-4">This chat ID/session is expired. Create a new one.</p>
@@ -221,57 +245,57 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     Back
                 </button>
-                <h2 class="text-2xl font-semibold text-primary">Secure Chat Session</h2>
+                <h2 class="text-2xl font-semibold text-theme">Secure Chat Session</h2>
                 <button id="end-chat" class="btn-danger">End Session</button>
             </div>
             <div id="chat-box" class="chat-box"></div>
             <div class="relative mt-4 flex items-center">
-                <input id="message-input" type="text" class="flex-1 p-3 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type your message...">
+                <input id="message-input" type="text" class="flex-1 p-3 rounded-lg input-theme focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type your message...">
                 <button id="send-message" class="btn-primary ml-3">Send</button>
                 <button id="emoji-btn" class="ml-3 p-3 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500" aria-label="Open emoji picker">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5 text-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </button>
                 <button id="media-btn" class="ml-3 p-3 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500" aria-label="Upload media">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <svg class="w-5 h-5 text-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </button>
                 <button id="delete-timer" class="ml-3 p-3 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500" aria-label="Set delete timer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5 text-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </button>
             </div>
             <div id="emoji-panel" class="hidden"></div>
             <div id="delete-options" class="hidden mt-2 p-3 border rounded-lg bg-white dark:bg-gray-700 shadow-lg">
-                <button data-time="60" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-primary">1 min</button>
-                <button data-time="180" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-primary">3 min</button>
-                <button data-time="300" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-primary">5 min</button>
-                <button id="custom-timer" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-primary">Custom</button>
+                <button data-time="60" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-theme">1 min</button>
+                <button data-time="180" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-theme">3 min</button>
+                <button data-time="300" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-theme">5 min</button>
+                <button id="custom-timer" class="block w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-theme">Custom</button>
             </div>
             <input id="media-input" type="file" class="hidden" accept="image/*,video/*" />
         </section>
 
         <section class="mt-16 text-center">
-            <h2 class="text-3xl font-semibold text-primary">What is Nobody Knows?</h2>
-            <p class="mt-6 max-w-2xl mx-auto text-lg text-primary">Nobody Knows is a privacy-first chat platform ensuring end-to-end encrypted conversations. No messages, metadata, or media are stored after the session ends. Built by a dedicated developer passionate about secure communication.</p>
+            <h2 class="text-3xl font-semibold text-theme">What is Nobody Knows?</h2>
+            <p class="mt-6 max-w-2xl mx-auto text-lg text-theme">Nobody Knows is a privacy-first chat platform ensuring end-to-end encrypted conversations. No messages, metadata, or media are stored after the session ends. Built by a dedicated developer passionate about secure communication.</p>
         </section>
     </main>
 
     <footer class="text-center py-10 bg-gray-100 dark:bg-gray-800">
-        <p class="mb-4 text-lg text-primary">Contact us:</p>
+        <p class="mb-4 text-lg text-theme">Contact us:</p>
         <div class="flex justify-center space-x-6">
             <a href="https://www.instagram.com/nobody_knows_792?igsh=MTFmY3FjcWgwOXRuNg==" target="_blank">
-                <img src="instagram-icon.png" alt="Instagram" class="w-8 h-8 hover:opacity-80 transition">
+                <img src="/instagram-icon.png" alt="Instagram" class="w-8 h-8 hover:opacity-80 transition">
             </a>
             <a href="https://t.me/Sung_jin_woo_79" target="_blank">
-                <img src="telegram-icon.png" alt="Telegram" class="w-8 h-8 hover:opacity-80 transition">
+                <img src="/telegram-icon.png" alt="Telegram" class="w-8 h-8 hover:opacity-80 transition">
             </a>
         </div>
-        <p class="mt-6 text-sm text-primary">@All Rights Reserved By Nobody Knows</p>
+        <p class="mt-6 text-sm text-theme">@All Rights Reserved By Nobody Knows</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
     <script>
         let socket = null;
         let isCreator = false;
-        const words = ["Message", "Encrypted", "Text", "Secure"];
+        const words = ["Private", "Encrypted", "Text", "Secure"];
         let wordIndex = 0;
 
         // Slogan animation
@@ -286,6 +310,8 @@
             }, 500);
         }
         setInterval(changeSlogan, 2000);
+
+വ
 
         // Theme toggle
         document.getElementById("theme-toggle").addEventListener("click", () => {
@@ -354,12 +380,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ maxUsers: parseInt(maxUsers) })
             })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
-                    document.getElementById("chat-id-text").textContent = data.chatId;
-                    document.getElementById("chat-id-display").classList.remove("hidden");
-                    isCreator = true;
-                    startChatSession(data.chatId);
+                    if (data.chatId) {
+                        document.getElementById("chat-id-text").textContent = data.chatId;
+                        document.getElementById("chat-id-display").classList.remove("hidden");
+                        isCreator = true;
+                        startChatSession(data.chatId);
+                    } else {
+                        throw new Error("Invalid response: No chatId received");
+                    }
                 })
                 .catch(err => alert("Error creating session: " + err.message));
         });
@@ -378,7 +411,10 @@
                 return;
             }
             fetch(`/join-session/${chatId}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         startChatSession(chatId);
@@ -428,12 +464,16 @@
             const chatId = document.getElementById("chat-id-text").textContent || document.getElementById("join-chat-id").value;
             if (isCreator && chatId) {
                 fetch(`/end-session/${chatId}`, { method: 'POST' })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (socket) socket.close();
                         }
-                    });
+                    })
+                    .catch(err => alert("Error ending session: " + err.message));
             } else {
                 if (socket) socket.close();
             }
@@ -503,3 +543,4 @@
             });
         });
     </script>
+    
